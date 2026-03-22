@@ -58,6 +58,7 @@ final class User
             ]);
             $userId = (int) $pdo->lastInsertId();
             $pdo->prepare('INSERT INTO accounts (user_id, balance) VALUES (:user_id, 0)')->execute(['user_id' => $userId]);
+            Profile::ensureForUser($userId);
             $pdo->commit();
             return $userId;
         } catch (Throwable $e) {
@@ -87,22 +88,34 @@ final class User
     {
         $pdo = Database::connection();
         $partnerCode = strtoupper(trim($partnerCode));
-        if ($partnerCode === '') throw new InvalidArgumentException('Bitte einen Partnercode eingeben.');
+        if ($partnerCode === '') {
+            throw new InvalidArgumentException('Bitte einen Partnercode eingeben.');
+        }
 
         $currentUser = self::findById($currentUserId);
-        if (!$currentUser) throw new RuntimeException('Benutzer wurde nicht gefunden.');
-        if (!empty($currentUser['partner_user_id'])) throw new InvalidArgumentException('Du bist bereits mit einem Partner verbunden.');
+        if (!$currentUser) {
+            throw new RuntimeException('Benutzer wurde nicht gefunden.');
+        }
+        if (!empty($currentUser['partner_user_id'])) {
+            throw new InvalidArgumentException('Du bist bereits mit einem Partner verbunden.');
+        }
 
         $partner = self::findByPartnerCode($partnerCode);
-        if (!$partner) throw new InvalidArgumentException('Partnercode nicht gefunden.');
-        if ((int)$partner['id'] === $currentUserId) throw new InvalidArgumentException('Du kannst dich nicht mit dir selbst verbinden.');
-        if (!empty($partner['partner_user_id'])) throw new InvalidArgumentException('Dieser Benutzer ist bereits mit einem anderen Partner verbunden.');
+        if (!$partner) {
+            throw new InvalidArgumentException('Partnercode nicht gefunden.');
+        }
+        if ((int) $partner['id'] === $currentUserId) {
+            throw new InvalidArgumentException('Du kannst dich nicht mit dir selbst verbinden.');
+        }
+        if (!empty($partner['partner_user_id'])) {
+            throw new InvalidArgumentException('Dieser Benutzer ist bereits mit einem anderen Partner verbunden.');
+        }
 
         $pdo->beginTransaction();
         try {
             $stmt = $pdo->prepare('UPDATE users SET partner_user_id = :partner_user_id WHERE id = :id');
-            $stmt->execute(['partner_user_id' => (int)$partner['id'], 'id' => $currentUserId]);
-            $stmt->execute(['partner_user_id' => $currentUserId, 'id' => (int)$partner['id']]);
+            $stmt->execute(['partner_user_id' => (int) $partner['id'], 'id' => $currentUserId]);
+            $stmt->execute(['partner_user_id' => $currentUserId, 'id' => (int) $partner['id']]);
             $pdo->commit();
         } catch (Throwable $e) {
             $pdo->rollBack();
@@ -114,10 +127,14 @@ final class User
     {
         $pdo = Database::connection();
         $currentUser = self::findById($currentUserId);
-        if (!$currentUser) throw new RuntimeException('Benutzer wurde nicht gefunden.');
+        if (!$currentUser) {
+            throw new RuntimeException('Benutzer wurde nicht gefunden.');
+        }
 
-        $partnerId = !empty($currentUser['partner_user_id']) ? (int)$currentUser['partner_user_id'] : null;
-        if ($partnerId === null) throw new InvalidArgumentException('Es ist kein Partner verbunden.');
+        $partnerId = !empty($currentUser['partner_user_id']) ? (int) $currentUser['partner_user_id'] : null;
+        if ($partnerId === null) {
+            throw new InvalidArgumentException('Es ist kein Partner verbunden.');
+        }
 
         $pdo->beginTransaction();
         try {
@@ -136,10 +153,21 @@ final class User
         $stmt = Database::connection()->prepare('SELECT partner_user_id FROM users WHERE id = :id LIMIT 1');
         $stmt->execute(['id' => $userId]);
         $partnerUserId = $stmt->fetchColumn();
-        if (!$partnerUserId) return null;
+        if (!$partnerUserId) {
+            return null;
+        }
 
-        $stmt = Database::connection()->prepare('SELECT u.id, u.email, u.username, u.partner_code, u.partner_user_id, u.created_at, u.updated_at, a.balance FROM users u INNER JOIN accounts a ON a.user_id = u.id WHERE u.id = :partner_user_id LIMIT 1');
-        $stmt->execute(['partner_user_id' => (int)$partnerUserId]);
+        Profile::ensureForUser((int) $partnerUserId);
+        $stmt = Database::connection()->prepare(
+            'SELECT u.id, u.email, u.username, u.partner_code, u.partner_user_id, u.created_at, u.updated_at, a.balance,
+                    up.display_name, up.headline, up.bio, up.city, up.favorite_activity, up.avatar_icon, up.accent_color, up.weekly_goal
+             FROM users u
+             INNER JOIN accounts a ON a.user_id = u.id
+             LEFT JOIN user_profiles up ON up.user_id = u.id
+             WHERE u.id = :partner_user_id
+             LIMIT 1'
+        );
+        $stmt->execute(['partner_user_id' => (int) $partnerUserId]);
         return $stmt->fetch() ?: null;
     }
 
