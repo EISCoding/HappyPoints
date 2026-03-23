@@ -49,7 +49,7 @@ final class User
 
         $pdo->beginTransaction();
         try {
-            $stmt = $pdo->prepare('INSERT INTO users (email, username, password_hash, partner_code) VALUES (:email, :username, :password_hash, :partner_code)');
+            $stmt = $pdo->prepare('INSERT INTO users (email, username, password_hash, partner_code, email_verified_at) VALUES (:email, :username, :password_hash, :partner_code, NULL)');
             $stmt->execute([
                 'email' => $email,
                 'username' => $username,
@@ -67,13 +67,9 @@ final class User
         }
     }
 
-    public static function attemptLogin(string $email, string $password): int
+    public static function verifyPassword(array $user, string $password): bool
     {
-        $user = self::findByEmail($email);
-        if (!$user || !password_verify($password, (string) $user['password_hash'])) {
-            throw new InvalidArgumentException('E-Mail oder Passwort ist falsch.');
-        }
-        return (int) $user['id'];
+        return password_verify($password, (string) ($user['password_hash'] ?? ''));
     }
 
     public static function generateUniquePartnerCode(): string

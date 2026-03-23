@@ -48,6 +48,15 @@ $profileCompletion = min(100, $profileCompletion);
                 </div>
             </div>
         </div>
+        <p class="mt-6 text-lg font-semibold text-white"><?= e($headline) ?></p>
+        <p class="mt-3 max-w-3xl text-sm leading-7 text-slate-400"><?= e($bio) ?></p>
+        <div class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="rounded-3xl border border-white/10 bg-white/5 p-4"><div class="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">E-Mail</div><div class="mt-2 text-sm font-bold text-white"><?= e((string) $user['email']) ?></div></div>
+            <div class="rounded-3xl border border-white/10 bg-white/5 p-4"><div class="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Verifizierung</div><div class="mt-2 text-sm font-bold <?= !empty($user['email_verified_at']) ? 'text-emerald-300' : 'text-amber-300' ?>"><?= e($verificationStatus) ?></div></div>
+            <div class="rounded-3xl border border-white/10 bg-white/5 p-4"><div class="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Partnercode</div><div class="mt-2 text-lg font-black text-white"><?= e((string) $user['partner_code']) ?></div></div>
+            <div class="rounded-3xl border border-white/10 bg-white/5 p-4"><div class="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Registriert</div><div class="mt-2 text-sm font-bold text-white"><?= e(accountDate((string) $user['created_at'])) ?></div></div>
+        </div>
+    </div>
 
         <p class="mt-6 text-lg font-semibold text-white"><?= e($headline) ?></p>
         <p class="mt-3 max-w-3xl text-sm leading-7 text-slate-400"><?= e($bio) ?></p>
@@ -69,7 +78,8 @@ $profileCompletion = min(100, $profileCompletion);
                 <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Lieblingsaktivität</div>
                 <div class="mt-2 text-xl font-black text-white"><?= e($favActivity !== '' ? $favActivity : 'Offen') ?></div>
             </div>
-        </div>
+            <button class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 text-sm font-bold text-white shadow-card" type="submit"><i class='bx bx-save text-lg'></i> Profil speichern</button>
+        </form>
     </div>
 
     <div class="rounded-[32px] border border-white/10 bg-slate-900/80 p-6 shadow-card sm:p-8">

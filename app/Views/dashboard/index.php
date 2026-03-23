@@ -15,13 +15,19 @@ $redeemedCoupons = 0;
 $availableCoupons = 0;
 $creditCount = 0;
 $debitCount = 0;
+$completedTodos = 0;
+$openTodos = 0;
+$redeemedCoupons = 0;
+$availableCoupons = 0;
 
 foreach ($transactions as $transaction) {
-    if (($transaction['type'] ?? '') === 'credit') {
-        $creditCount++;
-    } else {
-        $debitCount++;
-    }
+    (($transaction['type'] ?? '') === 'credit') ? $creditCount++ : $debitCount++;
+}
+foreach ($todos as $todo) {
+    ((int) ($todo['is_completed'] ?? 0) === 1) ? $completedTodos++ : $openTodos++;
+}
+foreach ($coupons as $coupon) {
+    ((int) ($coupon['is_redeemed'] ?? 0) === 1) ? $redeemedCoupons++ : $availableCoupons++;
 }
 foreach ($todos as $todo) {
     ((int) ($todo['is_completed'] ?? 0) === 1) ? $completedTodos++ : $openTodos++;
@@ -91,7 +97,10 @@ function dashboardDate(string $value): string
                     <div class="mt-2 text-2xl font-black text-white"><?= $availableCoupons ?></div>
                 </div>
             </div>
-        </div>
+            <input class="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-white outline-none focus:border-brand" id="title" name="title" type="text" value="<?= e((string) old('title', 'Manuelle Buchung')) ?>" required>
+            <textarea id="note" name="note" rows="4" class="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-white outline-none focus:border-brand" placeholder="Kurze Notiz zur Buchung"><?= e((string) old('note')) ?></textarea>
+            <button class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 text-sm font-bold text-white shadow-card" type="submit"><i class='bx bx-save text-lg'></i> Buchung speichern</button>
+        </form>
     </div>
 
     <div class="grid gap-4 sm:grid-cols-2">
@@ -145,6 +154,7 @@ function dashboardDate(string $value): string
                     <label class="mb-2 block text-xs font-bold uppercase tracking-[0.24em] text-slate-400" for="amount">Betrag</label>
                     <input class="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-sm text-white outline-none transition focus:border-brand" id="amount" name="amount" type="number" min="1" value="<?= e((string) old('amount', '5')) ?>" required>
                 </div>
+                <div class="text-right text-xs text-slate-400"><div>+ <?= $creditCount ?></div><div>- <?= $debitCount ?></div></div>
             </div>
             <div>
                 <label class="mb-2 block text-xs font-bold uppercase tracking-[0.24em] text-slate-400" for="title">Titel</label>
@@ -340,6 +350,7 @@ function dashboardDate(string $value): string
             <p class="mt-2 text-sm leading-6 text-slate-400">Alle Buchungen bleiben erhalten und speisen auch den Verlauf.</p>
         </div>
     </div>
+</section>
 
     <div class="mt-6 space-y-3">
         <?php if (empty($transactions)): ?>

@@ -28,7 +28,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
             <?php endif; ?>
         </div>
     </nav>
-</div>
+<?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>

@@ -11,6 +11,16 @@ function navIsActive(string $path, string $currentPath): bool
 {
     return $path === $currentPath;
 }
+
+function navItem(string $path, string $label, string $icon, string $currentPath): string
+{
+    $isActive = navIsActive($path, $currentPath);
+    $classes = $isActive
+        ? 'border-white/15 bg-white text-slate-950 shadow-card'
+        : 'border-white/10 bg-white/5 text-slate-200 hover:border-white/20 hover:bg-white/10';
+
+    return '<a href="' . e($path) . '" class="flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-semibold transition ' . $classes . '"><i class="bx ' . e($icon) . ' text-xl"></i><span>' . e($label) . '</span></a>';
+}
 ?>
 <!DOCTYPE html>
 <html lang="de">

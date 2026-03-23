@@ -37,6 +37,9 @@ switch ([$method, $uri]) {
     case ['POST', '/register']:
         $authController->register();
         break;
+    case ['GET', '/verify-email']:
+        $authController->verifyEmail();
+        break;
     case ['GET', '/logout']:
         $authController->logout();
         break;
