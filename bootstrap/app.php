@@ -14,6 +14,7 @@ require_once APP_PATH . '/Core/Redirect.php';
 require_once APP_PATH . '/Core/Database.php';
 require_once APP_PATH . '/Core/View.php';
 require_once APP_PATH . '/Core/Auth.php';
+require_once APP_PATH . '/Core/Mailer.php';
 
 Session::start((string)($appConfig['session_name'] ?? 'app_session'));
 Database::init($dbConfig);

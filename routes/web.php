@@ -1,9 +1,13 @@
 <?php
 declare(strict_types=1);
 
+require_once APP_PATH . '/Models/Profile.php';
+require_once APP_PATH . '/Models/EmailVerification.php';
 require_once APP_PATH . '/Models/User.php';
 require_once APP_PATH . '/Models/Account.php';
 require_once APP_PATH . '/Models/Transaction.php';
+require_once APP_PATH . '/Models/Todo.php';
+require_once APP_PATH . '/Models/Coupon.php';
 require_once APP_PATH . '/Controllers/AuthController.php';
 require_once APP_PATH . '/Controllers/DashboardController.php';
 require_once APP_PATH . '/Controllers/AccountController.php';
@@ -34,6 +38,9 @@ switch ([$method, $uri]) {
     case ['POST', '/register']:
         $authController->register();
         break;
+    case ['GET', '/verify-email']:
+        $authController->verifyEmail();
+        break;
     case ['GET', '/logout']:
         $authController->logout();
         break;
@@ -43,8 +50,23 @@ switch ([$method, $uri]) {
     case ['POST', '/dashboard/balance']:
         $dashboardController->adjustBalance();
         break;
+    case ['POST', '/dashboard/todos']:
+        $dashboardController->createTodo();
+        break;
+    case ['POST', '/dashboard/todos/toggle']:
+        $dashboardController->toggleTodo();
+        break;
+    case ['POST', '/dashboard/coupons']:
+        $dashboardController->createCoupon();
+        break;
+    case ['POST', '/dashboard/coupons/redeem']:
+        $dashboardController->redeemCoupon();
+        break;
     case ['GET', '/account']:
         $accountController->index();
+        break;
+    case ['POST', '/account/profile']:
+        $accountController->updateProfile();
         break;
     case ['GET', '/partner']:
         $partnerController->index();
