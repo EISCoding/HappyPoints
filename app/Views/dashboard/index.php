@@ -125,7 +125,6 @@ function dashboardDate(string $value): string
             <div class="mt-1 text-sm text-slate-400">Bereits genutzte Belohnungen</div>
         </div>
     </div>
-</section>
 
 <section class="mt-5 grid gap-5 xl:grid-cols-[0.95fr_1.05fr]">
     <div id="buchung" class="rounded-[32px] border border-white/10 bg-slate-900/80 p-6 shadow-card sm:p-8">
