@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 require_once APP_PATH . '/Models/Profile.php';
-require_once APP_PATH . '/Models/EmailVerification.php';
 require_once APP_PATH . '/Models/User.php';
 require_once APP_PATH . '/Models/Account.php';
 require_once APP_PATH . '/Models/Transaction.php';

@@ -12,10 +12,9 @@ final class DashboardController
         }
 
         $user = Account::getUserWithAccount($userId);
-        $partner = User::getPartnerForUser($userId);
         $transactions = Transaction::latestByUserId($userId, 12);
-        $todos = Todo::latestAssignedToUser($userId, 8);
-        $coupons = Coupon::latestAssignedToUser($userId, 8);
+        $todos = Todo::latestByUserId($userId, 8);
+        $coupons = Coupon::latestByUserId($userId, 8);
         $chartPoints = Transaction::chartSeriesByUserId($userId, 8);
 
         $chartLabels = [];
@@ -32,7 +31,6 @@ final class DashboardController
 
         View::render('dashboard.index', [
             'user' => $user,
-            'partner' => $partner,
             'transactions' => $transactions,
             'todos' => $todos,
             'coupons' => $coupons,
@@ -82,8 +80,8 @@ final class DashboardController
         $pointsReward = (int) ($_POST['points_reward'] ?? 5);
 
         try {
-            Todo::createForPartner($userId, $title, $details, $pointsReward);
-            flashMessage('success', 'Partner-To-do gespeichert.');
+            Todo::create($userId, $title, $details, $pointsReward);
+            flashMessage('success', 'To-do gespeichert.');
         } catch (Throwable $e) {
             withOldInput(['todo_title' => $title, 'todo_details' => $details, 'todo_points_reward' => $pointsReward]);
             flashMessage('error', $e->getMessage());
@@ -124,8 +122,8 @@ final class DashboardController
         $cost = (int) ($_POST['cost'] ?? 10);
 
         try {
-            Coupon::createForPartner($userId, $title, $description, $cost);
-            flashMessage('success', 'Partner-Coupon gespeichert.');
+            Coupon::create($userId, $title, $description, $cost);
+            flashMessage('success', 'Coupon gespeichert.');
         } catch (Throwable $e) {
             withOldInput(['coupon_title' => $title, 'coupon_description' => $description, 'coupon_cost' => $cost]);
             flashMessage('error', $e->getMessage());
