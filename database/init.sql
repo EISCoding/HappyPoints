@@ -69,7 +69,6 @@ CREATE TABLE IF NOT EXISTS transactions (
 CREATE TABLE IF NOT EXISTS todos (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     user_id INT UNSIGNED NOT NULL,
-    created_by_user_id INT UNSIGNED NOT NULL,
     title VARCHAR(190) NOT NULL,
     details TEXT NULL,
     points_reward INT NOT NULL DEFAULT 5,
@@ -80,17 +79,12 @@ CREATE TABLE IF NOT EXISTS todos (
         FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-    CONSTRAINT fk_todos_created_by
-        FOREIGN KEY (created_by_user_id) REFERENCES users(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
     INDEX idx_todos_user_status (user_id, is_completed, created_at)
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS coupons (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     user_id INT UNSIGNED NOT NULL,
-    created_by_user_id INT UNSIGNED NOT NULL,
     title VARCHAR(190) NOT NULL,
     description TEXT NULL,
     cost INT NOT NULL DEFAULT 10,
@@ -101,23 +95,5 @@ CREATE TABLE IF NOT EXISTS coupons (
         FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-    CONSTRAINT fk_coupons_created_by
-        FOREIGN KEY (created_by_user_id) REFERENCES users(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
     INDEX idx_coupons_user_status (user_id, is_redeemed, created_at)
-) ENGINE=InnoDB;
-
-CREATE TABLE IF NOT EXISTS email_verifications (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id INT UNSIGNED NOT NULL,
-    token_hash CHAR(64) NOT NULL UNIQUE,
-    expires_at DATETIME NOT NULL,
-    used_at DATETIME NULL DEFAULT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_email_verifications_user
-        FOREIGN KEY (user_id) REFERENCES users(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-    INDEX idx_email_verifications_lookup (token_hash, expires_at, used_at)
 ) ENGINE=InnoDB;

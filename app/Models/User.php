@@ -155,7 +155,7 @@ final class User
 
         Profile::ensureForUser((int) $partnerUserId);
         $stmt = Database::connection()->prepare(
-            'SELECT u.id, u.email, u.username, u.partner_code, u.partner_user_id, u.email_verified_at, u.created_at, u.updated_at, a.balance,
+            'SELECT u.id, u.email, u.username, u.partner_code, u.partner_user_id, u.created_at, u.updated_at, a.balance,
                     up.display_name, up.headline, up.bio, up.city, up.favorite_activity, up.avatar_icon, up.accent_color, up.weekly_goal
              FROM users u
              INNER JOIN accounts a ON a.user_id = u.id

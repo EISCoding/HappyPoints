@@ -47,8 +47,6 @@ final class Mailer
 
             $boundary = 'b-' . bin2hex(random_bytes(12));
             $headers = [
-                'Date: ' . gmdate('D, d M Y H:i:s') . ' +0000',
-                'Message-ID: <' . bin2hex(random_bytes(12)) . '@happypoints.local>',
                 'From: ' . self::formatAddress($fromEmail, $fromName),
                 'To: ' . self::formatAddress($toEmail, $toName),
                 'Subject: =?UTF-8?B?' . base64_encode($subject) . '?=',
@@ -95,9 +93,7 @@ final class Mailer
 
     private static function dotStuff(string $message): string
     {
-        $normalized = str_replace(["\r\n", "\r"], "\n", $message);
-        $normalized = preg_replace('/(^|\n)\./', "$1..", $normalized) ?? $normalized;
-        return str_replace("\n", "\r\n", $normalized);
+        return preg_replace('/(^|\r\n)\./', "$1..", str_replace(["\r\n", "\r"], "\n", $message)) ?? $message;
     }
 
     private static function command($socket, string $command, array $expectedCodes): string

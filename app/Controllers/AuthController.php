@@ -103,9 +103,7 @@ final class AuthController
         }
 
         $token = EmailVerification::issueForUser($userId);
-        $mailConfig = require BASE_PATH . '/config/mail.php';
-        $verifyPath = (string) ($mailConfig['verify_path'] ?? '/verify-email');
-        $verificationUrl = appUrl($verifyPath . '?token=' . urlencode($token));
+        $verificationUrl = appUrl('/verify-email?token=' . urlencode($token));
         $subject = 'Bitte bestätige deine Happypoints E-Mail';
         $html = Mailer::renderTemplate('verify', [
             'subject' => $subject,
